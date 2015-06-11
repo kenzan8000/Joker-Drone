@@ -90,3 +90,5 @@ DerivedData
 *.swo
 Thumbs.db
 .gitconfig
+
+/public/stylesheets

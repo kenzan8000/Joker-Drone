@@ -9,6 +9,16 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+var sassMiddleware = require('node-sass-middleware');
+var path = require('path');
+app.use(sassMiddleware({
+    src: __dirname + '/scss',
+    dest: path.join(__dirname, 'public'),
+    debug: true,
+    outputStyle: 'compressed',
+    prefix:  '/prefix'
+}));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
