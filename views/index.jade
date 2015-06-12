@@ -4,6 +4,7 @@ html
         link(rel='stylesheet', href='/css/pure.css')
         link(rel='stylesheet', href='/css/app.css')
         link(rel='stylesheet', href='/css/index.css')
+        script(src='/js/index.js')
 
     body
         // header
@@ -13,7 +14,8 @@ html
         // content
         .content
             .simulator
-            button.pure-button.pure-button-primary.deploy-button Deploy
+            button.pure-button.pure-button-primary.deploy-button(onclick='g_jokerDrone.deploy();') Deploy
+
 
         // footer
         include footer
