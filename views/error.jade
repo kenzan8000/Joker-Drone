@@ -1,6 +1,18 @@
-extends layout
+doctype html
+html
+    head
+        title= title
+        link(rel='stylesheet', href='/css/app.css')
 
-block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+    body
+        // header
+        extends header
+
+        // content
+        .content
+            h1= message
+            h2= error.status
+            pre #{error.stack}
+
+        // footer
+        extends footer
