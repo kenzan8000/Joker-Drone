@@ -1,15 +1,19 @@
 html
     head
-        title= title
+        title Joker Drone
+        link(rel='stylesheet', href='/css/pure.css')
         link(rel='stylesheet', href='/css/app.css')
+        link(rel='stylesheet', href='/css/index.css')
 
     body
         // header
-        extends header
+        include header
+            h1 Joker Drone
 
         // content
         .content
-            h1= Hoge
+            .simulator
+            button.pure-button.pure-button-primary.deploy-button Deploy
 
         // footer
-        extends footer
+        include footer
