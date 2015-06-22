@@ -1,7 +1,3 @@
-(function(global) {
-"use strict;"
-
-
 /**************************************************
  *            JokerDrone                          *
  **************************************************/
@@ -14,9 +10,19 @@ function JokerDrone() {
 JokerDrone.prototype.commands = [];
 
 /**
- * deploy how Drones fly
+ * deploy how drone flies
  **/
 JokerDrone.prototype.deploy = JokerDrone_deploy;
+
+/**
+ * takeoff
+ **/
+JokerDrone.prototype.takeoff = JokerDrone_takeoff;
+
+/**
+ * land
+ **/
+JokerDrone.prototype.land = JokerDrone_land;
 
 /**
  * go
@@ -26,7 +32,15 @@ JokerDrone.prototype.go = JokerDrone_go;
 
 /// Implementation
 function JokerDrone_deploy() {
-    console.log("deploy");
+    console.log(this.commands);
+}
+
+function JokerDrone_takeoff() {
+    this.commands.push({takeoff: ""});
+}
+
+function JokerDrone_land() {
+    this.commands.push({land: ""});
 }
 
 function JokerDrone_go(position) {
@@ -38,13 +52,17 @@ function JokerDrone_go(position) {
  *                  Main                          *
  **************************************************/
 window.onload = function() {
+    // editor
     var editor = ace.edit("editor");
     editor.getSession().setMode("ace/mode/javascript");
     editor.setTheme("ace/theme/twilight");
-
-    /// Global variable
-    var g_jokerDrone = new JokerDrone();
 }
 
 
-})((this || 0).self || global);
+function deploy() {
+    var drone = JokerDrone();
+    var code = ace.edit("editor").getSession().getValue();
+    console.log(code);
+    eval(code);
+    drone.deploy();
+}
