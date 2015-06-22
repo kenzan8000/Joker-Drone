@@ -1,20 +1,26 @@
 html
     head
         title Joker Drone
-        link(rel='stylesheet', href='/css/pure.css')
         link(rel='stylesheet', href='/css/app.css')
         link(rel='stylesheet', href='/css/index.css')
+        script(src='/js/ace.js')
         script(src='/js/index.js')
 
     body
         // header
         include header
-            h1 Joker Drone
 
         // content
         .content
-            .simulator
-            button.pure-button.pure-button-primary.deploy-button(onclick='g_jokerDrone.deploy();') Deploy
+            pre#editor.editor
+                | var drone = new JokerDrone();
+                | drone.takeoff();
+                | drone.go({x: 0.0, y: 0.0, z: 1.5});
+                | drone.go({x: 1.0, y: 0.0, z: 1.5});
+                | drone.go({x: 1.0, y: 1.0, z: 1.5});
+                | drone.go({x: 0.0, y: 1.0, z: 1.5});
+                | drone.go({x: 0.0, y: 0.0, z: 1.5});
+                | drone.land();
 
         // footer
         include footer

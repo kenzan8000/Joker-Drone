@@ -1,23 +1,6 @@
-/****** simulator ******/
-.simulator {
+/****** editor ******/
+
+.editor {
     width: 100%;
-    height: 0;
-    padding-bottom: 100%;
-    border: 1px solid #bbb;
-}
-
-
-/****** deploy ******/
-.pure-button {
-    border-radius: 6px;
-}
-
-.deploy-button {
-    width: 40%;
-    height: 54px;
-    background: #d35400 !important;
-}
-
-.deploy-button:hover {
-    background: #e67e22 !important;
+    height: 320px;
 }

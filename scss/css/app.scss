@@ -1,4 +1,24 @@
+/****** common ******/
+
 body {
     width: 100%;
-    text-align: center;
+    margin: 0;
+}
+
+pre {
+    margin: 0;
+}
+
+
+/****** header ******/
+
+.header {
+}
+
+.header-title {
+    background-color: #ccc;
+    margin: 0;
+    padding: 0.1em 0.5em;
+    font-size: 1.1em;
+    font-weight: 100;
 }
