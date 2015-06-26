@@ -6,14 +6,6 @@ function JokerDrone() {
 
 /// Member
 
-/// commands
-JokerDrone.prototype.commands = [];
-
-/**
- * deploy how drone flies
- **/
-JokerDrone.prototype.deploy = JokerDrone_deploy;
-
 /**
  * takeoff
  **/
@@ -31,26 +23,27 @@ JokerDrone.prototype.land = JokerDrone_land;
 JokerDrone.prototype.go = JokerDrone_go;
 
 /// Implementation
-function JokerDrone_deploy() {
-    console.log(this.commands);
-}
 
 function JokerDrone_takeoff() {
-    this.commands.push({takeoff: ""});
+    g_commands.push({takeoff: ""});
 }
 
 function JokerDrone_land() {
-    this.commands.push({land: ""});
+    g_commands.push({land: ""});
 }
 
 function JokerDrone_go(position) {
-    this.commands.push({go: position});
+    g_commands.push({go: position});
 }
 
 
 /**************************************************
  *                  Main                          *
  **************************************************/
+
+/// global variable
+var g_commands = [];
+
 window.onload = function() {
     // editor
     var editor = ace.edit("editor");
@@ -58,11 +51,11 @@ window.onload = function() {
     editor.setTheme("ace/theme/twilight");
 }
 
+function compile() {
+    g_commands = [];
 
-function deploy() {
-    var drone = JokerDrone();
-    var code = ace.edit("editor").getSession().getValue();
-    console.log(code);
+    var code = ace.edit('editor').getSession().getValue();
     eval(code);
-    drone.deploy();
+
+    console.log(g_commands);
 }

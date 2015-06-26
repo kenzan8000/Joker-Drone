@@ -13,6 +13,7 @@ html
         // content
         .content
             pre#editor.editor
+                | var drone = new JokerDrone();
                 | drone.takeoff();
                 | drone.go({x: 0.0, y: 0.0, z: 1.5});
                 | drone.go({x: 1.0, y: 0.0, z: 1.5});
@@ -21,7 +22,7 @@ html
                 | drone.go({x: 0.0, y: 0.0, z: 1.5});
                 | drone.land();
 
-            button(onclick='deploy();') Deploy
+            button(onclick='compile();') Compile
 
         // footer
         include footer
