@@ -44,12 +44,15 @@ function JokerDrone_go(position) {
 /// global variable
 var g_commands = [];
 
-window.onload = function() {
+
+
+$(document).ready(function() {
     // editor
-    var editor = ace.edit("editor");
-    editor.getSession().setMode("ace/mode/javascript");
-    editor.setTheme("ace/theme/twilight");
-}
+    // (Set window.editor to use the variable at another place.)
+    window.editor = ace.edit("editor");
+    window.editor.getSession().setMode("ace/mode/javascript");
+    window.editor.setTheme("ace/theme/twilight");
+});
 
 function compile() {
     g_commands = [];
@@ -58,4 +61,46 @@ function compile() {
     eval(code);
 
     console.log(g_commands);
+
+    // Insert a transition effect
+    transition(window.editor);
 }
+
+
+// ref: http://qiita.com/yutori_enginner/items/98ecaae8945e3c17efa2
+var INTERVAL = 100; // Interval to call the function (呼び出す間隔).
+var LINE_NUM = 30;  // The number of iteration to append lines (行を追加する回数).
+var StartTimer, StopTimer, Timer, time, timerID;
+time = 0;
+timerID = 0;
+function transition(editor) {
+    StartTimer();
+}
+StartTimer = function() {
+  timerID = setInterval(Timer, INTERVAL);
+};
+StopTimer = function() {
+  clearInterval(timerID);
+};
+Timer = function() {
+  time = time + 1;
+  console.log(time);
+
+  var x = "1234567890";
+  // Clear the code for the first time
+  if (time == 1) {
+    editor.setValue("");
+  }
+
+  // Append dummy strings line by line.
+  editor.session.insert({
+    row: editor.session.getLength(),
+    column: 0
+  }, x+x+x+x+x+";\n");
+
+  if (time > LINE_NUM) {
+    StopTimer();
+    return 'DONE!!';
+  }
+};
+
