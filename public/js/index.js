@@ -68,14 +68,23 @@ function compile() {
 
 
 // ref: http://qiita.com/yutori_enginner/items/98ecaae8945e3c17efa2
-var INTERVAL = 100; // Interval to call the function (呼び出す間隔).
-var LINE_NUM = 30;  // The number of iteration to append lines (行を追加する回数).
+var INTERVAL = 15;  // Interval to call the function[ms] (呼び出す間隔).
+var LINE_NUM = 100; // The number of iteration to append lines (行を追加する回数).
 var StartTimer, StopTimer, Timer, time, timerID;
 time = 0;
 timerID = 0;
 function transition(editor) {
     StartTimer();
 }
+
+// Create a random string
+function randomString(length, chars) {
+    var result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
+    return result;
+}
+
+// Definition of timer functions
 StartTimer = function() {
   timerID = setInterval(Timer, INTERVAL);
 };
@@ -86,17 +95,20 @@ Timer = function() {
   time = time + 1;
   console.log(time);
 
-  var x = "1234567890";
+  // Create a random string that has 256 characters.
+  var rString = randomString(256, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+
   // Clear the code for the first time
   if (time == 1) {
     editor.setValue("");
   }
 
   // Append dummy strings line by line.
+  // Add "//" characters to make the line green!
   editor.session.insert({
     row: editor.session.getLength(),
     column: 0
-  }, x+x+x+x+x+";\n");
+  }, "// "+rString+"\n");
 
   if (time > LINE_NUM) {
     StopTimer();
