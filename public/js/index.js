@@ -66,7 +66,8 @@ function compile() {
     console.log(g_commands);
 
     // Insert a transition effect
-    transition(window.editor);
+    var terminal = new Terminal();
+    terminal.transition(window.editor);
 }
 
 
@@ -77,53 +78,51 @@ var BACKGROUND_COLOR = '#232323'; // The background color of the editor (used to
 var StartTimer, StopTimer, Timer, time, timerID;
 time = 0;
 timerID = 0;
-function transition(editor) {
-    // Change the style of page number divs
-    //#232323
-    //$cells = $('.ace_gutter_cell');
-    //console.log($cells);
-    //$('.ace_gutter-cell').css('color', BACKGROUND_COLOR);
-    // Modify CSS style directly from JS
-    /*document.styleSheets[0].cssRules[0].cssText = "\
-      .ace_gutter-cell {
-        color: #232323;
-      }";*/
-    console.log(document.styleSheets[0].cssRules);
 
-    /*var pageDiv = getCSSRule('.ace_gutter-cell');
-    killCSSRule(pageDiv);
-    var newPageDiv = addCSSRule('.ace_gutter-cell');
-    newPageDiv.style.color = '#232323';*/
+/**************************************************
+ *            Terminal                          *
+ **************************************************/
+function Terminal() {
+};
 
-    var sheet= document.styleSheets[0];
-    var rules= 'cssRules' in sheet? sheet.cssRules : sheet.rules;
-    console.log(rules);
+/// Member
 
-    //$(".ace_gutter-cell").last().after("<div class='myClass'>Now!</div>");
-    $("body").addClass("ace_gutter-cell-update");
-    StartTimer();
+/**
+ *
+ **/
+Terminal.prototype.transition = Terminal_transition;
+Terminal.prototype.random_string = Terminal_random_string;
+Terminal.prototype.start_timer = Terminal_start_timer;
+Terminal.prototype.stop_timer = Terminal_stop_timer;
+Terminal.prototype.timer = Terminal_timer;
+
+function Terminal_transition(editor) {
+    this.start_timer();
 }
 
-// Create a random string
-function randomString(length, chars) {
+
+/**
+ *  Create a random string
+ **/
+function Terminal_random_string(length, chars) {
     var result = '';
     for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
     return result;
 }
 
 // Definition of timer functions
-StartTimer = function() {
-  timerID = setInterval(Timer, INTERVAL);
+//Terminal_start_timer = function() {
+function Terminal_start_timer() {
+  timerID = setInterval(Terminal_timer, INTERVAL);
 };
-StopTimer = function() {
+function Terminal_stop_timer() {
   clearInterval(timerID);
 };
-Timer = function() {
+function Terminal_timer() {
   time = time + 1;
-  //console.log(time);
 
   // Create a random string that has 256 characters.
-  var rString = randomString(256, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  var rString = Terminal_random_string(256, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
   /*asciify("HelloWorld", {font: 'starwars'}, function(err, msg) {
     if(err) return;
     console.log(msg);
@@ -142,8 +141,7 @@ Timer = function() {
   }, "// "+rString+"\n");
 
   if (time > LINE_NUM) {
-    StopTimer();
-    //$(".ace_layer").removeClass("compile");
+    Terminal_stop_timer();
     return 'DONE!!';
   }
   $(".ace_layer").addClass("compile");
