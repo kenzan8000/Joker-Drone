@@ -15,11 +15,14 @@ script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js')
         script(src='/js/index.js')
 
     body
+
         // header
         include header
 
+
         // content
-        .content
+    .container
+        content
             pre#editor.editor
                 | var drone = new JokerDrone();
                 | drone.takeoff();

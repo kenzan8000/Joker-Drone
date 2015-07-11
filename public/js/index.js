@@ -48,7 +48,6 @@ var g_commands = [];
 
 $(document).ready(function() {
     // editor
-
     var editor = ace.edit("editor");
     editor.getSession().setMode("ace/mode/javascript");
     editor.setTheme("ace/theme/vibrant_ink");
