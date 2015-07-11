@@ -48,10 +48,10 @@ var g_commands = [];
 
 $(document).ready(function() {
     // editor
-    // (Set window.editor to use the variable at another place.)
-    window.editor = ace.edit("editor");
-    window.editor.getSession().setMode("ace/mode/javascript");
-    window.editor.setTheme("ace/theme/twilight");
+
+    var editor = ace.edit("editor");
+    editor.getSession().setMode("ace/mode/javascript");
+    editor.setTheme("ace/theme/vibrant_ink");
 });
 
 function compile() {
