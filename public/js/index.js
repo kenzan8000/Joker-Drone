@@ -71,14 +71,6 @@ function compile() {
 }
 
 
-// ref: http://qiita.com/yutori_enginner/items/98ecaae8945e3c17efa2
-var INTERVAL = 15;  // Interval to call the function[ms] (呼び出す間隔).
-var LINE_NUM = 100; // The number of iteration to append lines (行を追加する回数).
-var BACKGROUND_COLOR = '#232323'; // The background color of the editor (used to hide page number divs).
-var StartTimer, StopTimer, Timer, time, timerID;
-time = 0;
-timerID = 0;
-
 /**************************************************
  *            Terminal                          *
  **************************************************/
@@ -95,6 +87,15 @@ Terminal.prototype.random_string = Terminal_random_string;
 Terminal.prototype.start_timer = Terminal_start_timer;
 Terminal.prototype.stop_timer = Terminal_stop_timer;
 Terminal.prototype.timer = Terminal_timer;
+
+// Constant
+// ref: http://qiita.com/yutori_enginner/items/98ecaae8945e3c17efa2
+Terminal.prototype.INTERVAL = 15;  // Interval to call the function[ms] (呼び出す間隔).
+Terminal.prototype.LINE_NUM = 100; // The number of iteration to append lines (行を追加する回数).
+Terminal.prototype.BACKGROUND_COLOR = '#232323'; // The background color of the editor (used to hide page number divs).
+var StartTimer, StopTimer, Timer, time, timerID;
+time = 0;
+timerID = 0;
 
 function Terminal_transition(editor) {
     this.start_timer();
@@ -113,7 +114,7 @@ function Terminal_random_string(length, chars) {
 // Definition of timer functions
 //Terminal_start_timer = function() {
 function Terminal_start_timer() {
-  timerID = setInterval(Terminal_timer, INTERVAL);
+  timerID = setInterval(Terminal_timer, Terminal.INTERVAL);
 };
 function Terminal_stop_timer() {
   clearInterval(timerID);
@@ -140,7 +141,7 @@ function Terminal_timer() {
     column: 0
   }, "// "+rString+"\n");
 
-  if (time > LINE_NUM) {
+  if (time > Terminal.LINE_NUM) {
     Terminal_stop_timer();
     return 'DONE!!';
   }
