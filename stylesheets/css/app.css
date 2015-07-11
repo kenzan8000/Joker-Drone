@@ -1,0 +1,26 @@
+/****** common ******/
+/* line 3, ../../sass/css/app.scss */
+body {
+  width: 100%;
+  margin: 0;
+}
+
+/* line 8, ../../sass/css/app.scss */
+pre {
+  margin: 0;
+}
+
+/****** header ******/
+/* line 17, ../../sass/css/app.scss */
+.header-title {
+  background-color: #ccc;
+  margin: 0;
+  padding: 0.1em 0.5em;
+  font-size: 1.1em;
+  font-weight: 100;
+}
+
+/* line 25, ../../sass/css/app.scss */
+.ace_storage {
+  color: deeppink;
+}
