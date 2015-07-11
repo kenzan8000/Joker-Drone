@@ -52,6 +52,9 @@ $(document).ready(function() {
     window.editor = ace.edit("editor");
     window.editor.getSession().setMode("ace/mode/javascript");
     window.editor.setTheme("ace/theme/twilight");
+
+    // Erase the warning
+    window.editor.$blockScrolling = Infinity
 });
 
 function compile() {
@@ -70,10 +73,34 @@ function compile() {
 // ref: http://qiita.com/yutori_enginner/items/98ecaae8945e3c17efa2
 var INTERVAL = 15;  // Interval to call the function[ms] (呼び出す間隔).
 var LINE_NUM = 100; // The number of iteration to append lines (行を追加する回数).
+var BACKGROUND_COLOR = '#232323'; // The background color of the editor (used to hide page number divs).
 var StartTimer, StopTimer, Timer, time, timerID;
 time = 0;
 timerID = 0;
 function transition(editor) {
+    // Change the style of page number divs
+    //#232323
+    //$cells = $('.ace_gutter_cell');
+    //console.log($cells);
+    //$('.ace_gutter-cell').css('color', BACKGROUND_COLOR);
+    // Modify CSS style directly from JS
+    /*document.styleSheets[0].cssRules[0].cssText = "\
+      .ace_gutter-cell {
+        color: #232323;
+      }";*/
+    console.log(document.styleSheets[0].cssRules);
+
+    /*var pageDiv = getCSSRule('.ace_gutter-cell');
+    killCSSRule(pageDiv);
+    var newPageDiv = addCSSRule('.ace_gutter-cell');
+    newPageDiv.style.color = '#232323';*/
+
+    var sheet= document.styleSheets[0];
+    var rules= 'cssRules' in sheet? sheet.cssRules : sheet.rules;
+    console.log(rules);
+
+    //$(".ace_gutter-cell").last().after("<div class='myClass'>Now!</div>");
+    $("body").addClass("ace_gutter-cell-update");
     StartTimer();
 }
 
@@ -93,10 +120,14 @@ StopTimer = function() {
 };
 Timer = function() {
   time = time + 1;
-  console.log(time);
+  //console.log(time);
 
   // Create a random string that has 256 characters.
   var rString = randomString(256, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  /*asciify("HelloWorld", {font: 'starwars'}, function(err, msg) {
+    if(err) return;
+    console.log(msg);
+  });*/
 
   // Clear the code for the first time
   if (time == 1) {
@@ -105,14 +136,15 @@ Timer = function() {
 
   // Append dummy strings line by line.
   // Add "//" characters to make the line green!
-  editor.session.insert({
+  editor.session.insert ({
     row: editor.session.getLength(),
     column: 0
   }, "// "+rString+"\n");
 
   if (time > LINE_NUM) {
     StopTimer();
+    //$(".ace_layer").removeClass("compile");
     return 'DONE!!';
   }
+  $(".ace_layer").addClass("compile");
 };
-
