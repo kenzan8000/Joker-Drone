@@ -48,9 +48,13 @@ var g_commands = [];
 
 $(document).ready(function() {
     // editor
-    var editor = ace.edit("editor");
-    editor.getSession().setMode("ace/mode/javascript");
-    editor.setTheme("ace/theme/vibrant_ink");
+    // (Set window.editor to use the variable at another place.)
+    window.editor = ace.edit("editor");
+    window.editor.getSession().setMode("ace/mode/javascript");
+    window.editor.setTheme("ace/theme/vibrant_ink");
+
+    // Erase the warning
+    window.editor.$blockScrolling = Infinity
 });
 
 function compile() {
@@ -62,40 +66,68 @@ function compile() {
     console.log(g_commands);
 
     // Insert a transition effect
-    transition(window.editor);
+    var terminal = new Terminal();
+    terminal.transition(window.editor);
 }
 
 
+/**************************************************
+ *            Terminal                          *
+ **************************************************/
+function Terminal() {
+};
+
+/// Member
+
+/**
+ *
+ **/
+Terminal.prototype.transition = Terminal_transition;
+Terminal.prototype.random_string = Terminal_random_string;
+Terminal.prototype.start_timer = Terminal_start_timer;
+Terminal.prototype.stop_timer = Terminal_stop_timer;
+Terminal.prototype.timer = Terminal_timer;
+
+// Constant
 // ref: http://qiita.com/yutori_enginner/items/98ecaae8945e3c17efa2
-var INTERVAL = 15;  // Interval to call the function[ms] (呼び出す間隔).
-var LINE_NUM = 100; // The number of iteration to append lines (行を追加する回数).
+Terminal.prototype.INTERVAL = 15;  // Interval to call the function[ms] (呼び出す間隔).
+Terminal.prototype.LINE_NUM = 100; // The number of iteration to append lines (行を追加する回数).
+Terminal.prototype.BACKGROUND_COLOR = '#232323'; // The background color of the editor (used to hide page number divs).
 var StartTimer, StopTimer, Timer, time, timerID;
 time = 0;
 timerID = 0;
-function transition(editor) {
-    StartTimer();
+
+function Terminal_transition(editor) {
+    this.start_timer();
 }
 
-// Create a random string
-function randomString(length, chars) {
+
+/**
+ *  Create a random string
+ **/
+function Terminal_random_string(length, chars) {
     var result = '';
     for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
     return result;
 }
 
 // Definition of timer functions
-StartTimer = function() {
-  timerID = setInterval(Timer, INTERVAL);
+//Terminal_start_timer = function() {
+function Terminal_start_timer() {
+  timerID = setInterval(Terminal_timer, Terminal.INTERVAL);
 };
-StopTimer = function() {
+function Terminal_stop_timer() {
   clearInterval(timerID);
 };
-Timer = function() {
+function Terminal_timer() {
   time = time + 1;
-  console.log(time);
 
   // Create a random string that has 256 characters.
-  var rString = randomString(256, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  var rString = Terminal_random_string(256, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  /*asciify("HelloWorld", {font: 'starwars'}, function(err, msg) {
+    if(err) return;
+    console.log(msg);
+  });*/
 
   // Clear the code for the first time
   if (time == 1) {
@@ -104,14 +136,14 @@ Timer = function() {
 
   // Append dummy strings line by line.
   // Add "//" characters to make the line green!
-  editor.session.insert({
+  editor.session.insert ({
     row: editor.session.getLength(),
     column: 0
   }, "// "+rString+"\n");
 
-  if (time > LINE_NUM) {
-    StopTimer();
+  if (time > Terminal.LINE_NUM) {
+    Terminal_stop_timer();
     return 'DONE!!';
   }
+  $(".ace_layer").addClass("compile");
 };
-
