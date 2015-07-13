@@ -51,7 +51,7 @@ $(document).ready(function() {
     // (Set window.editor to use the variable at another place.)
     window.editor = ace.edit("editor");
     window.editor.getSession().setMode("ace/mode/javascript");
-    window.editor.setTheme("ace/theme/twilight");
+    window.editor.setTheme("ace/theme/vibrant_ink");
 
     // Erase the warning
     window.editor.$blockScrolling = Infinity
