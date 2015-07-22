@@ -129,7 +129,6 @@ Terminal.prototype.timer = function() {
 var g_commands = [];
 var g_editor;
 
-
 $(function(){
     // editor
     g_editor = ace.edit("editor");
@@ -149,4 +148,15 @@ function compile() {
     var completionHandler = function() { g_editor.setValue(code); };
     var terminal = new Terminal(completionHandler);
     terminal.transition(window.editor);
+
+    var json = { "commands" : g_commands };
+    $.ajax({
+        type: "POST",
+         url: "/",
+        data: JSON.stringify(json),
+    tentType: "application/json; charset=utf-8",
+    dataType: "json",
+     success: function(data){ console.log(data); },
+     failure: function(error) { console.log(error); }
+    });
 }
