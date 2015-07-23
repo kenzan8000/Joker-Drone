@@ -1,13 +1,14 @@
 html
     head
         title Joker Drone
+        link(rel='stylesheet', href='/css/_bootstrap.css')
         link(rel='stylesheet', href='/css/app.css')
         link(rel='stylesheet', href='/css/index.css')
         script(src='/js/ace.js')
 
         script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js')
         script(src='/js/theme-vibrant_ink.js')
-            
+
 
         script(src='/js/index.js')
 
@@ -29,8 +30,19 @@ html
                 | drone.go({x: 0.0, y: 0.5, z: 1.0});
                 | drone.go({x: 0.0, y: 0.0, z: 1.0});
                 | drone.land();
-
             button(onclick='compile();') Compile
+
+    .container#user
+        content
+            pre#editor.editor
+                form
+                    form-group.form-group
+                        label.sr-only
+                        input.form-control.form-style(type='text', placeholder='CodeName')
+                        label.sr-only
+                        input.form-control.form-style(type='text', placeholder='Number')
+                            
+
 
         // footer
         include footer

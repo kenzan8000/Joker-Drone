@@ -44,6 +44,16 @@ pre {
 
 .container{
   padding: 20px;
+  width: 70%;
+  float: left;
+}
+
+#user.container {
+width: 20%;
+}
+
+#editor.editor{
+background-color: #000000;
 }
 
 .editor{
@@ -51,7 +61,31 @@ pre {
   border-radius: 3px;
 }
 
+.form-style{
+  color: #ffffff;
+  padding: 0;
+  height: 35px;
+  font-size: 14px;
+  border-radius: 1px;
+  border-style: none none solid none;
+  border-width: 1px;
+  border-color:rgba(27,253,253,0.9);
+//  border-color: #000000;
+  /*border-color: hsla(0, 0%, 100%, .4);*/
+  background: none;
+  box-shadow: none;
+  margin-bottom: 30px;margin-top: 15px;
+  /*box-shadow: inset 0 1px 1px rgba(0,0,0,.075);*/
+}
 
+.form-style:focus {
+  border-color: azure;
+  border-style: none none solid none;
+  outline: 0;
+  box-shadow: none;
+  /*-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);*/
+  /*box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);*/
+}
 
 /* line 8, ../../sass/css/app.scss */
 pre {
