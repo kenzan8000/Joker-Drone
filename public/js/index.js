@@ -142,21 +142,27 @@ function compile() {
     g_commands = [];
     var code = g_editor.getSession().getValue();
     eval(code);
-    console.log(g_commands);
+    //console.log(g_commands);
+
+    // send commands
+    var sendCommands = function() {
+        //var json = { "commands" : g_commands };
+        $.ajax({
+            type: "POST",
+             url: "/",
+            data: { "commands" : JSON.stringify(g_commands) },//JSON.stringify(json),
+        tentType: "application/json; charset=utf-8",
+        dataType: "json",
+         success: function(data){
+             if (data['application_code'] == 200) { alert("Compile Succeeded."); }
+             else { alert("Compile Failed."); }
+         },
+         failure: function(error) { alert("Compile Failed Because " + error); }
+        });
+    }
 
     // Insert a transition effect
-    var completionHandler = function() { g_editor.setValue(code); };
+    var completionHandler = function() { g_editor.setValue(code); sendCommands(); };
     var terminal = new Terminal(completionHandler);
     terminal.transition(window.editor);
-
-    var json = { "commands" : g_commands };
-    $.ajax({
-        type: "POST",
-         url: "/",
-        data: JSON.stringify(json),
-    tentType: "application/json; charset=utf-8",
-    dataType: "json",
-     success: function(data){ console.log(data); },
-     failure: function(error) { console.log(error); }
-    });
 }
