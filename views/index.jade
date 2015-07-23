@@ -4,16 +4,22 @@ html
         link(rel='stylesheet', href='/css/app.css')
         link(rel='stylesheet', href='/css/index.css')
         script(src='/js/ace.js')
+
         script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js')
         script(src='/js/theme-vibrant_ink.js')
+            
+
         script(src='/js/index.js')
 
     body
+
         // header
         include header
 
+
         // content
-        .content
+    .container
+        content
             pre#editor.editor
                 | var drone = new JokerDrone();
                 | drone.takeoff();

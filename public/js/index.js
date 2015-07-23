@@ -131,10 +131,16 @@ var g_editor;
 
 $(function(){
     // editor
+//<<<<<<< HEAD
     g_editor = ace.edit("editor");
     g_editor.getSession().setMode("ace/mode/javascript");
     g_editor.setTheme("ace/theme/vibrant_ink");
     g_editor.$blockScrolling = Infinity
+//=======
+//    var editor = ace.edit("editor");
+//    editor.getSession().setMode("ace/mode/javascript");
+//    editor.setTheme("ace/theme/vibrant_ink");
+//>>>>>>> develop(junshu2)
 });
 
 function compile() {
