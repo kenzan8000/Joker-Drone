@@ -33,6 +33,7 @@ router.post('/', function(req, res) {
         }
     }
     if (!willLand) { code += '.hover(1000).land()'; }
+    code += ";";
 
     // execute code
     var mission = autonomy.createMission();

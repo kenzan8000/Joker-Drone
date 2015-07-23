@@ -17,11 +17,11 @@ html
             pre#editor.editor
                 | var drone = new JokerDrone();
                 | drone.takeoff();
-                | drone.go({x: 0.0, y: 0.0, z: 1.5});
-                | drone.go({x: 1.0, y: 0.0, z: 1.5});
-                | drone.go({x: 1.0, y: 1.0, z: 1.5});
-                | drone.go({x: 0.0, y: 1.0, z: 1.5});
-                | drone.go({x: 0.0, y: 0.0, z: 1.5});
+                | drone.go({x: 0.0, y: 0.0, z: 1.0});
+                | drone.go({x: 0.5, y: 0.0, z: 1.0});
+                | drone.go({x: 0.5, y: 0.5, z: 1.0});
+                | drone.go({x: 0.0, y: 0.5, z: 1.0});
+                | drone.go({x: 0.0, y: 0.0, z: 1.0});
                 | drone.land();
 
             button(onclick='compile();') Compile
