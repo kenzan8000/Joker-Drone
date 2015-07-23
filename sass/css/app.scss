@@ -3,11 +3,14 @@
 body {
     width: 100%;
     margin: 0;
+    background-color: black;
+    background-size: 80%;
 }
 
 pre {
     margin: 0;
 }
+
 
 /****** header ******/
 
@@ -15,13 +18,42 @@ pre {
 }
 
 .header-title {
-    background-color: #ccc;
-    margin: 0;
-    padding: 0.1em 0.5em;
-    font-size: 1.1em;
-    font-weight: 100;
+  background-color: #ccc;
+  margin: 0;
+  padding: 0.1em 0.5em;
+  font-size: 1.1em;
+  font-weight: 100;
 }
 
 .ace_storage{
   color: deeppink;
+}
+
+.ace-vibrant-ink{
+
+   .ace_gutter {
+    background-color: rgba(36, 36, 36, 0.6) !important;
+  }
+
+  background-color: rgba(36,36,36,0.6) !important;
+}
+
+//.ace-vibrant-ink .ace_gutter{
+//  background-color: rgba(36,36,36,0.6) !important;
+//}
+
+.container{
+  padding: 20px;
+}
+
+.editor{
+  border: 4px solid rgba(27,253,253,0.9);
+  border-radius: 3px;
+}
+
+
+
+/* line 8, ../../sass/css/app.scss */
+pre {
+  margin: 0;
 }
