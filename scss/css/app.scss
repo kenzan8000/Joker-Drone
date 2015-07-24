@@ -74,8 +74,14 @@ background-color: #000000;
   /*border-color: hsla(0, 0%, 100%, .4);*/
   background: none;
   box-shadow: none;
-  margin-bottom: 30px;margin-top: 15px;
+  margin-bottom: 30px;
+
   /*box-shadow: inset 0 1px 1px rgba(0,0,0,.075);*/
+}
+
+label{
+  margin-bottom: -5px;
+  color:rgba(27,253,253,0.9);
 }
 
 .form-style:focus {
@@ -85,6 +91,12 @@ background-color: #000000;
   box-shadow: none;
   /*-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);*/
   /*box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);*/
+}
+
+.user-info{
+  margin-bottom: 10px;
+  font-size: 15px;
+  color:white;
 }
 
 /* line 8, ../../sass/css/app.scss */
