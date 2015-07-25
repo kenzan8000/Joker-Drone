@@ -10,14 +10,14 @@ function JokerDrone() {
  * takeoff
  **/
 JokerDrone.prototype.takeoff = function () {
-    g_commands.push({takeoff: ""});
+    g_commands.push({takeoff: "a"});
 };
 
 /**
  * land
  **/
 JokerDrone.prototype.land = function() {
-    g_commands.push({land: ""});
+    g_commands.push({land: "a"});
 }
 
 /**
