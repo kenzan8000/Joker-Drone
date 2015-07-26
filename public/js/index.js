@@ -33,28 +33,111 @@ JokerDrone.prototype.go = function(position) {
  *            Terminal                          *
  **************************************************/
 function Terminal(completionHandler) {
-    this.time = 0;
-    this.timerID = 0;
+    this.animationCount = 0;
+    this.timerID = null;
     this.completionHandler = completionHandler;
 };
 
+/// Constant
+
+Terminal.prototype.COMPILE_ANIMATION_STRINGS = [
+    ".", ".", ".", ".", ".\n",
+];
+Terminal.prototype.COMPILE_ANIMATION_INTERVAL = 500;
+Terminal.prototype.RANDOM_ANIMATION_INTERVAL = 15;
+Terminal.prototype.RANDOM_ANIMATION_COUNT = 100;
+
 /// Member
 
-// Constant
-// ref: http://qiita.com/yutori_enginner/items/98ecaae8945e3c17efa2
-Terminal.prototype.INTERVAL = 15;  // Interval to call the function[ms] (呼び出す間隔).
-Terminal.prototype.LINE_NUM = 100; // The number of iteration to append lines (行を追加する回数).
-Terminal.prototype.BACKGROUND_COLOR = '#232323'; // The background color of the editor (used to hide page number divs).
-
-Terminal.prototype.time;
+Terminal.prototype.animationCount;
 Terminal.prototype.timerID;
 Terminal.prototype.completionHandler;
 
 /**
- *
+ * start animation
  **/
-Terminal.prototype.transition = function(editor) {
-    this.start_timer();
+Terminal.prototype.startAnimation = function() {
+    $(".ace_layer").addClass("compile");
+
+    var self = this;
+    this.animateCompile()
+        .then(function() { return self.animateRandomString(); })
+        .done(function() {
+            $(".ace_layer").removeClass("compile");
+            self.completionHandler();
+        })
+        .fail(function () {
+            console.log('Rejected!');
+            self.completionHandler();
+        });
+};
+
+/**
+ * stop animation
+ **/
+Terminal.prototype.stopAnimation = function() {
+    clearInterval(this.timerID);
+};
+
+/**
+ * compile animation
+ * @return JQuery.Deferred
+ **/
+Terminal.prototype.animateCompile = function() {
+    var deferred = jQuery.Deferred();
+    this.animationCount = 0;
+
+    var self = this;
+    this.timerID = setInterval(
+        function() {
+            // finish animation
+            if (self.animationCount >= self.COMPILE_ANIMATION_STRINGS.length) {
+                self.stopAnimation();
+                return deferred.resolve();
+            }
+
+            // animation
+            var terminalOutput = self.COMPILE_ANIMATION_STRINGS[self.animationCount];
+            g_editor.session.insert(
+                { row: g_editor.session.getLength(), column: 0 },
+                terminalOutput
+            );
+
+            self.animationCount++;
+        },
+        self.COMPILE_ANIMATION_INTERVAL
+    );
+    return deferred.promise();
+}
+
+/**
+ * random string animation
+ * @return JQuery.Deferred
+ **/
+Terminal.prototype.animateRandomString = function() {
+    var deferred = jQuery.Deferred();
+    this.animationCount = 0;
+
+    var self = this;
+    this.timerID = setInterval(
+        function() {
+            // insert random string to terminal
+            var terminalOutput = self.randomString(256, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+            g_editor.session.insert(
+                { row: g_editor.session.getLength(), column: 0 },
+                terminalOutput + "\n"
+            );
+
+            // finish animation
+            if (self.animationCount > self.RANDOM_ANIMATION_COUNT) {
+                self.stopAnimation();
+                return deferred.resolve();
+            }
+            self.animationCount++;
+        },
+        self.RANDOM_ANIMATION_INTERVAL
+    );
+    return deferred.promise();
 };
 
 /**
@@ -63,62 +146,12 @@ Terminal.prototype.transition = function(editor) {
  * @param chars character list for random character
  * @return random string
  **/
-Terminal.prototype.random_string = function(length, chars) {
+Terminal.prototype.randomString = function(length, chars) {
     var result = '';
-    for (var i = length; i > 0; --i) {
-        result += chars[Math.round(Math.random() * (chars.length - 1))];
-    }
+    for (var i = length; i > 0; --i) { result += chars[Math.round(Math.random() * (chars.length - 1))]; }
     return result;
 };
 
-/**
- *
- **/
-Terminal.prototype.start_timer = function() {
-    var self = this;
-    this.timerID = setInterval(function() { self.timer() }, self.INTERVAL);
-};
-
-/**
- *
- **/
-Terminal.prototype.stop_timer = function() {
-    clearInterval(this.timerID);
-};
-
-/**
- *
- **/
-Terminal.prototype.timer = function() {
-    this.time = this.time + 1;
-
-    // Create a random string that has 256 characters.
-    var rString = this.random_string(256, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
-    /*asciify("HelloWorld", {font: 'starwars'}, function(err, msg) {
-        if(err) return;
-        console.log(msg);
-    });*/
-
-    // Clear the code for the first time
-    if (this.time == 1) {
-        g_editor.setValue("");
-    }
-
-    // Append dummy strings line by line.
-    // Add "//" characters to make the line green!
-    g_editor.session.insert ({
-        row: g_editor.session.getLength(),
-        column: 0
-    }, "// "+rString+"\n");
-
-    if (this.time > this.LINE_NUM) {
-        this.stop_timer();
-        this.completionHandler();
-        $(".ace_layer").removeClass("compile");
-        return 'DONE!!';
-    }
-    $(".ace_layer").addClass("compile");
-};
 
 
 /**************************************************
@@ -131,16 +164,10 @@ var g_editor;
 
 $(function(){
     // editor
-//<<<<<<< HEAD
     g_editor = ace.edit("editor");
     g_editor.getSession().setMode("ace/mode/javascript");
     g_editor.setTheme("ace/theme/vibrant_ink");
     g_editor.$blockScrolling = Infinity
-//=======
-//    var editor = ace.edit("editor");
-//    editor.getSession().setMode("ace/mode/javascript");
-//    editor.setTheme("ace/theme/vibrant_ink");
-//>>>>>>> develop(junshu2)
 });
 
 function compile() {
@@ -148,15 +175,13 @@ function compile() {
     g_commands = [];
     var code = g_editor.getSession().getValue();
     eval(code);
-    //console.log(g_commands);
 
     // send commands
     var sendCommands = function() {
-        //var json = { "commands" : g_commands };
         $.ajax({
             type: "POST",
              url: "/",
-            data: { "commands" : JSON.stringify(g_commands) },//JSON.stringify(json),
+            data: { "commands" : JSON.stringify(g_commands) },
         tentType: "application/json; charset=utf-8",
         dataType: "json",
          success: function(data){
@@ -167,8 +192,9 @@ function compile() {
         });
     }
 
-    // Insert a transition effect
+    // start animation
+    g_editor.setValue("");
     var completionHandler = function() { g_editor.setValue(code); sendCommands(); };
     var terminal = new Terminal(completionHandler);
-    terminal.transition(window.editor);
+    terminal.startAnimation(window.editor);
 }

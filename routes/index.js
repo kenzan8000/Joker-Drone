@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var autonomy = require('ardrone-autonomy');
+var mission = autonomy.createMission();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -36,7 +37,6 @@ router.post('/', function(req, res) {
     code += ";";
 
     // execute code
-    var mission = autonomy.createMission();
     console.log(code);
     eval(code);
     mission.run(function (err, result) {
