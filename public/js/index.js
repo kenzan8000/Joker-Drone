@@ -69,11 +69,6 @@ Terminal.prototype.startCompile = function() {
             $(".ace_layer").removeClass("compile");
             g_editor.renderer.setShowGutter(true);
             self.successHandler();
-        })
-        .fail(function () {
-            $(".ace_layer").removeClass("compile");
-            g_editor.renderer.setShowGutter(true);
-            self.failureHandler();
         });
 };
 
@@ -158,7 +153,6 @@ Terminal.prototype.postCommands = function() {
         function() {
             var animations = ["-", "\\", "|", "/"];
             var terminalOutput = progress + "Deploying " + animations[self.animationCount % animations.length];
-            console.log(self.animationCount % animations.length);
             g_editor.setValue(terminalOutput);
             self.animationCount++;
         },
@@ -168,9 +162,9 @@ Terminal.prototype.postCommands = function() {
         setTimeout(
             function() {
                 clearInterval(self.timerID);
-                var output = succeeded ? "Compile succeeded." : "Compile failed";
+                var output = succeeded ? "Compile succeeded." : "Compile failed.";
                 g_editor.setValue(g_editor.getSession().getValue() + "\n" + output);
-                return succeeded ? deferred.resolve() : deferred.reject();
+                return deferred.resolve();
             },
             1000
         );
@@ -184,7 +178,8 @@ Terminal.prototype.postCommands = function() {
     tentType: "application/json; charset=utf-8",
     dataType: "json",
      success: function(data){ return finishPost((data['application_code'] == 200)); },
-     failure: function(error) { return finishPost(false); }
+       error: function(error) { return finishPost(false); },
+     timeout: 10000
     });
 
     return deferred.promise();
