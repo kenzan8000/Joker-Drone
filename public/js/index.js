@@ -10,14 +10,14 @@ function JokerDrone() {
  * takeoff
  **/
 JokerDrone.prototype.takeoff = function () {
-    g_commands.push({takeoff: "a"});
+    g_commands.push({takeoff: ""});
 };
 
 /**
  * land
  **/
 JokerDrone.prototype.land = function() {
-    g_commands.push({land: "a"});
+    g_commands.push({land: ""});
 }
 
 /**
@@ -32,52 +32,70 @@ JokerDrone.prototype.go = function(position) {
 /**************************************************
  *            Terminal                          *
  **************************************************/
-function Terminal(completionHandler) {
+function Terminal(successHandler, failureHandler) {
     this.animationCount = 0;
     this.timerID = null;
-    this.completionHandler = completionHandler;
+    this.successHandler = successHandler;
+    this.failureHandler = failureHandler;
 };
 
 /// Constant
 
-Terminal.prototype.COMPILE_ANIMATION_STRINGS = [
-    ".", ".", ".", ".", ".\n",
-];
-Terminal.prototype.COMPILE_ANIMATION_INTERVAL = 500;
-Terminal.prototype.RANDOM_ANIMATION_INTERVAL = 15;
-Terminal.prototype.RANDOM_ANIMATION_COUNT = 100;
+Terminal.prototype.COMPILE_ANIMATION_INTERVAL = 10;
+Terminal.prototype.COMPILE_ANIMATION_COUNT_MAX = 100;
+Terminal.prototype.POST_COMMANDS_ANIMATION_INTERVAL = 75;
 
 /// Member
 
 Terminal.prototype.animationCount;
 Terminal.prototype.timerID;
-Terminal.prototype.completionHandler;
+Terminal.prototype.successHandler;
+Terminal.prototype.failureHandler;
 
 /**
  * start animation
  **/
-Terminal.prototype.startAnimation = function() {
+Terminal.prototype.startCompile = function() {
     $(".ace_layer").addClass("compile");
+    g_editor.renderer.setShowGutter(false);
 
     var self = this;
-    this.animateCompile()
-        .then(function() { return self.animateRandomString(); })
+    this.animateWait(100)
+        .then(function() { return self.animateCompile(); })
+        .then(function() { return self.animateWait(500); })
+        .then(function() { return self.postCommands(); })
+        .then(function() { return self.animateWait(2000); })
         .done(function() {
             $(".ace_layer").removeClass("compile");
-            self.completionHandler();
+            g_editor.renderer.setShowGutter(true);
+            self.successHandler();
         })
         .fail(function () {
-            console.log('Rejected!');
-            self.completionHandler();
+            $(".ace_layer").removeClass("compile");
+            g_editor.renderer.setShowGutter(true);
+            self.failureHandler();
         });
 };
 
 /**
- * stop animation
+ * wait animation
+ * @param duration duration to wait
+ * @return JQuery.Deferred
  **/
-Terminal.prototype.stopAnimation = function() {
-    clearInterval(this.timerID);
-};
+Terminal.prototype.animateWait = function(duration) {
+    var deferred = jQuery.Deferred();
+    this.animationCount = 0;
+
+    var self = this;
+    this.timerID = setInterval(
+        function() {
+            clearInterval(self.timerID);
+            return deferred.resolve();
+        },
+        duration
+    );
+    return deferred.promise();
+}
 
 /**
  * compile animation
@@ -90,68 +108,87 @@ Terminal.prototype.animateCompile = function() {
     var self = this;
     this.timerID = setInterval(
         function() {
-            // finish animation
-            if (self.animationCount >= self.COMPILE_ANIMATION_STRINGS.length) {
-                self.stopAnimation();
-                return deferred.resolve();
+            // count up
+            self.animationCount += Math.round(Math.random()) % 4;
+            if (self.animationCount >= self.COMPILE_ANIMATION_COUNT_MAX) {
+                self.animationCount = self.COMPILE_ANIMATION_COUNT_MAX;
             }
 
             // animation
-            var terminalOutput = self.COMPILE_ANIMATION_STRINGS[self.animationCount];
-            g_editor.session.insert(
-                { row: g_editor.session.getLength(), column: 0 },
-                terminalOutput
-            );
+            var terminalOutput = "Compiling ";
+                // progress(#)
+            var unit = 5;
+            var maxProgress = self.COMPILE_ANIMATION_COUNT_MAX / unit;
+            var progress = self.animationCount / unit;
+            for (var i = 0; i < maxProgress; i++) { terminalOutput += (i <= progress) ? "#" : " "; }
+                // progress(percentage)
+            var digitNumber = 0;
+            var number = self.animationCount;
+            while (number/10 >= 1) { digitNumber++;  number /= 10; }
+            for (var i = 0; i < 3-digitNumber; i++) { terminalOutput += " "; }
+            terminalOutput += self.animationCount + "%";
+                //
+            g_editor.setValue(terminalOutput);
 
-            self.animationCount++;
+            // finish animation
+            if (self.animationCount >= self.COMPILE_ANIMATION_COUNT_MAX) {
+                clearInterval(self.timerID);
+                return deferred.resolve();
+            }
         },
         self.COMPILE_ANIMATION_INTERVAL
     );
+
     return deferred.promise();
 }
 
 /**
- * random string animation
+ * POST commands to server
  * @return JQuery.Deferred
  **/
-Terminal.prototype.animateRandomString = function() {
+Terminal.prototype.postCommands = function() {
     var deferred = jQuery.Deferred();
-    this.animationCount = 0;
 
+    this.animationCount = 0;
     var self = this;
+    var progress = g_editor.getSession().getValue() + "\n";
+
+    // animation
     this.timerID = setInterval(
         function() {
-            // insert random string to terminal
-            var terminalOutput = self.randomString(256, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
-            g_editor.session.insert(
-                { row: g_editor.session.getLength(), column: 0 },
-                terminalOutput + "\n"
-            );
-
-            // finish animation
-            if (self.animationCount > self.RANDOM_ANIMATION_COUNT) {
-                self.stopAnimation();
-                return deferred.resolve();
-            }
+            var animations = ["-", "\\", "|", "/"];
+            var terminalOutput = progress + "Deploying " + animations[self.animationCount % animations.length];
+            console.log(self.animationCount % animations.length);
+            g_editor.setValue(terminalOutput);
             self.animationCount++;
         },
-        self.RANDOM_ANIMATION_INTERVAL
+        self.POST_COMMANDS_ANIMATION_INTERVAL
     );
+    var finishPost = function(succeeded) {
+        setTimeout(
+            function() {
+                clearInterval(self.timerID);
+                var output = succeeded ? "Compile succeeded." : "Compile failed";
+                g_editor.setValue(g_editor.getSession().getValue() + "\n" + output);
+                return succeeded ? deferred.resolve() : deferred.reject();
+            },
+            1000
+        );
+    };
+
+    // POST
+    $.ajax({
+        type: "POST",
+         url: "/",
+        data: { "commands" : JSON.stringify(g_commands) },
+    tentType: "application/json; charset=utf-8",
+    dataType: "json",
+     success: function(data){ return finishPost((data['application_code'] == 200)); },
+     failure: function(error) { return finishPost(false); }
+    });
+
     return deferred.promise();
-};
-
-/**
- * Create a random string
- * @param length random string's length
- * @param chars character list for random character
- * @return random string
- **/
-Terminal.prototype.randomString = function(length, chars) {
-    var result = '';
-    for (var i = length; i > 0; --i) { result += chars[Math.round(Math.random() * (chars.length - 1))]; }
-    return result;
-};
-
+}
 
 
 /**************************************************
@@ -176,25 +213,10 @@ function compile() {
     var code = g_editor.getSession().getValue();
     eval(code);
 
-    // send commands
-    var sendCommands = function() {
-        $.ajax({
-            type: "POST",
-             url: "/",
-            data: { "commands" : JSON.stringify(g_commands) },
-        tentType: "application/json; charset=utf-8",
-        dataType: "json",
-         success: function(data){
-             if (data['application_code'] == 200) { alert("Compile Succeeded."); }
-             else { alert("Compile Failed."); }
-         },
-         failure: function(error) { alert("Compile Failed Because " + error); }
-        });
-    }
-
     // start animation
     g_editor.setValue("");
-    var completionHandler = function() { g_editor.setValue(code); sendCommands(); };
-    var terminal = new Terminal(completionHandler);
-    terminal.startAnimation(window.editor);
+    var successHandler = function() { g_editor.setValue(code); };
+    var failureHandler = function() { g_editor.setValue(code); };
+    var terminal = new Terminal(successHandler, failureHandler);
+    terminal.startCompile(window.editor);
 }
