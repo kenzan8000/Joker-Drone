@@ -21,10 +21,11 @@ router.post('/', function(req, res) {
     var code = "mission";
     var willLand = false;
     for (var i = 0; i < commands.length; i++) {
+        willLand = false
         var command = commands[i];
         console.log(command);
         if (command.takeoff === '') { code += '.takeoff().hover(1000)' }
-        else if (commands.land === '') { code += '.hover(1000).land()'; willLand = true; }
+        else if (command.land === '') { code += '.hover(1000).land()'; willLand = true; }
         else if (command.go) {
             var direction = {};
             if (command.go.x !== undefined) { direction.x = command.go.x; }
