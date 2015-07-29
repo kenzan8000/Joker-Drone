@@ -32,11 +32,10 @@ JokerDrone.prototype.go = function(position) {
 /**************************************************
  *            Terminal                          *
  **************************************************/
-function Terminal(successHandler, failureHandler) {
+function Terminal(completionHandler) {
     this.animationCount = 0;
     this.timerID = null;
-    this.successHandler = successHandler;
-    this.failureHandler = failureHandler;
+    this.completionHandler = completionHandler;
 };
 
 /// Constant
@@ -49,14 +48,12 @@ Terminal.prototype.POST_COMMANDS_ANIMATION_INTERVAL = 75;
 
 Terminal.prototype.animationCount;
 Terminal.prototype.timerID;
-Terminal.prototype.successHandler;
-Terminal.prototype.failureHandler;
+Terminal.prototype.completionHandler;
 
 /**
  * start animation
  **/
 Terminal.prototype.startCompile = function() {
-    $(".ace_layer").addClass("compile");
     g_editor.renderer.setShowGutter(false);
 
     var self = this;
@@ -66,9 +63,9 @@ Terminal.prototype.startCompile = function() {
         .then(function() { return self.postCommands(); })
         .then(function() { return self.animateWait(2000); })
         .done(function() {
-            $(".ace_layer").removeClass("compile");
             g_editor.renderer.setShowGutter(true);
-            self.successHandler();
+            g_editor.session.getUndoManager().reset();
+            self.completionHandler();
         });
 };
 
@@ -210,8 +207,7 @@ function compile() {
 
     // start animation
     g_editor.setValue("");
-    var successHandler = function() { g_editor.setValue(code); };
-    var failureHandler = function() { g_editor.setValue(code); };
-    var terminal = new Terminal(successHandler, failureHandler);
+    var completionHandler = function() { g_editor.setValue(code); };
+    var terminal = new Terminal(completionHandler);
     terminal.startCompile(window.editor);
 }
